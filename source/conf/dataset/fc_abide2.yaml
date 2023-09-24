@@ -1,0 +1,18 @@
+name: fc_abide2
+batch_size: 16
+
+train_set: 0.8
+val_set: 0.1
+test_set: 0.1
+
+fc_path: /mnt/ssd1/mehul_data/research/fc_large_data.npy
+# stratified: True
+
+node_sz: 400
+node_feature_sz: 400
+num_classes: 2
+
+perc_edges: 100
+
+node: fc
+

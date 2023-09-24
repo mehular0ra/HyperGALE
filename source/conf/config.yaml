@@ -1,0 +1,49 @@
+defaults: 
+  - dataset: fc_abide2
+  - model: gcn   # hypergale,hypergraphgcn,hypergraphgcnv2,gcn,gat,graphsage
+  - optimizer: adam
+  - training: train
+
+
+# dataset:
+#   node: fc
+#   train_set: 0.9
+#   test_set: 0.1
+#   batch_size: 16
+
+
+model: 
+  model_save: False
+
+log_path: result
+repeat_time: 5
+device: cuda:0
+
+# wandb:
+is_wandb: False
+# doing_sweep: True
+project: icassp
+entity: mehular0ra
+# sweep_id: asd-graph/asd-graph/r49h4avh
+
+
+
+hydra:
+  job_logging:
+    root:
+      handlers: [console, file]
+      propagate: true
+    formatters:
+      precise:
+        format: '[%(asctime)s][%(filename)s][L%(lineno)d][%(levelname)s]%(message)s'
+        datefmt: '%Y-%m-%d %H:%M:%S'
+    handlers:
+      console:
+        class: logging.StreamHandler
+        formatter: precise
+        stream: ext://sys.stdout
+      file:
+        class: logging.FileHandler
+        formatter: precise
+        filename: ./output.log
+

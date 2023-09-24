@@ -1,0 +1,7 @@
+name: GCN
+
+num_layers: 2
+hidden_size: 64  # 8, 16, 32, 64, 128
+dropout: 0.5     # 0.25
+
+readout: linear   # linear, set_transformer, janossy, max, mean

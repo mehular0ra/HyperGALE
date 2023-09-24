@@ -1,0 +1,4 @@
+name: Train
+epochs: 200
+
+l2: 0.0
