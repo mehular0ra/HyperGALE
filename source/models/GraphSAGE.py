@@ -1,8 +1,7 @@
 import torch
 import torch.nn.functional as F
 import torch.nn as nn
-from torch_geometric.nn import SAGEConv, global_mean_pool
-from torch_geometric.data import Batch
+from torch_geometric.nn import SAGEConv
 
 from omegaconf import DictConfig
 import ipdb
@@ -31,14 +30,6 @@ class GraphSAGE(torch.nn.Module):
 
         self.lin = nn.Linear(self.hidden_size, 1)
 
-        # TODO: Add different pooling methods
-
-    # def convert_edge_positive(self, edge_index, edge_weight):
-
-    #     edge_index = edge_index[:, edge_weight > 0]
-    #     edge_weight = edge_weight[edge_weight > 0]
-    #     return edge_index, edge_weight
-
     def filter_top_edges(self, edge_index, edge_weight, batch, percentage=0.1):
         edge_list = []
         for graph_idx in batch.unique():
@@ -61,12 +52,9 @@ class GraphSAGE(torch.nn.Module):
         edge_index = self.filter_top_edges(edge_index, edge_weight, batch)
 
         for i in range(self.num_layers):
-            x = self.convs[i](x, edge_index)  # Don't pass edge_weight here
+            x = self.convs[i](x, edge_index)  
             if i < self.num_layers - 1:
                 x = F.leaky_relu(x)
-
-            # if torch.isnan(x).any():
-            #     print(f"Found NaN values in output tensor in layer {i}")
 
         xs = []
         for graph_idx in batch.unique():

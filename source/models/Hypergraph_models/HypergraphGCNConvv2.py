@@ -39,10 +39,8 @@ class HypergraphGCNConvv2(MessagePassing):
         self.in_channels = in_channels
         self.out_channels = out_channels
 
-        ### learn the hyperedge weights ###
         self.num_edges = kwargs['num_edges']
         self.learned_he_weights = Parameter(torch.Tensor(self.num_edges))
-        ### ###
 
 
         self.heads = 1

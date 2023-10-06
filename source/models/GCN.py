@@ -7,39 +7,6 @@ from torch_geometric.data import Batch
 from omegaconf import DictConfig
 import ipdb
 
-from ..components import tsne_plot_data, node_att_data_save
-
-
-
-class Attn_Net_Gated(nn.Module):
-    # Attention Network with Sigmoid Gating (3 fc layers). Args:
-    # L: input feature dimension
-    # D: hidden layer dimension
-    # dropout: whether to use dropout (p = 0.25)
-    # n_classes: number of classes """
-
-    def __init__(self, L=64, D=256, dropout=True, n_classes=1):
-        super(Attn_Net_Gated, self).__init__()
-        self.attention_a = [nn.Linear(L, D), nn.Tanh()]
-        self.attention_b = [nn.Linear(L, D), nn.Sigmoid()]
-        if dropout:
-            self.attention_a.append(nn.Dropout(0.25))
-            self.attention_b.append(nn.Dropout(0.25))
-
-        self.attention_a = nn.Sequential(*self.attention_a)
-        self.attention_b = nn.Sequential(*self.attention_b)
-        self.attention_c = nn.Linear(D, n_classes)
-
-    def forward(self, x):
-        a = self.attention_a(x)
-        b = self.attention_b(x)
-        A = a.mul(b)
-        A = self.attention_c(A)  # N x n_classes
-        # A = F.softmax(A, dim=0)
-        return A, x
-
-
-
 class GCN(torch.nn.Module):
     def __init__(self, cfg: DictConfig):
         super(GCN, self).__init__()

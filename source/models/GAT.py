@@ -1,8 +1,7 @@
 import torch
 import torch.nn.functional as F
 import torch.nn as nn
-from torch_geometric.nn import GATConv, global_mean_pool
-from torch_geometric.data import Batch
+from torch_geometric.nn import GATConv
 
 from omegaconf import DictConfig
 import ipdb
