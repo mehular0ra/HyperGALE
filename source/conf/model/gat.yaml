@@ -1,6 +1,6 @@
 name: GAT
 
-num_layers: 2
+num_layers: 3
 hidden_size: 64  # 8, 16, 32, 64, 128
 dropout: 0.5     # 0.25
 

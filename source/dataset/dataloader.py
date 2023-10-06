@@ -15,31 +15,21 @@ def init_stratified_dataloader(cfg: DictConfig,
                                graph_data_list: List,
                                site: np.array) -> List[DataLoader]:
     
-    train_length = cfg.dataset.train_set * len(graph_data_list)
-    # train_length = cfg.dataset.train_set * final_pearson.shape[0]
+    train_length = int(cfg.dataset.train_set * len(graph_data_list))
     train_ratio = cfg.dataset.train_set
-    val_ratio = cfg.dataset.val_set
     test_ratio = cfg.dataset.test_set
-    val_test_ratio = val_ratio + test_ratio
 
     # Stratified split
     split = StratifiedShuffleSplit(
-        n_splits=1, test_size=val_test_ratio, train_size=train_ratio, random_state=42)
-    for train_index, val_test_index in split.split(graph_data_list, site):
+        n_splits=1, test_size=test_ratio, train_size=train_ratio, random_state=42)
+    for train_index, test_index in split.split(graph_data_list, site):
         train_data_list = [graph_data_list[i] for i in train_index]
-        val_test_data_list = [graph_data_list[i] for i in val_test_index]
+        test_data_list = [graph_data_list[i] for i in test_index]
 
-    split = StratifiedShuffleSplit(
-        n_splits=1, test_size=val_test_ratio, train_size=train_ratio, random_state=42)
-    for val_index, test_index in split.split(val_test_data_list, site[val_test_index]):
-        val_data_list = [val_test_data_list[i] for i in val_index]
-        test_data_list = [val_test_data_list[i] for i in test_index]
 
     # create pyg dataloader
     train_dataloader = DataLoader(
         train_data_list, batch_size=cfg.dataset.batch_size, shuffle=True)
-    val_dataloader = DataLoader(
-        val_data_list, batch_size=cfg.dataset.batch_size, shuffle=False)
     test_dataloader = DataLoader(
         test_data_list, batch_size=cfg.dataset.batch_size, shuffle=False)
 
@@ -49,6 +39,6 @@ def init_stratified_dataloader(cfg: DictConfig,
         cfg.steps_per_epoch = (train_length - 1) // cfg.dataset.batch_size + 1
         cfg.total_steps = cfg.steps_per_epoch * cfg.training.epochs
 
-    return [train_dataloader, val_dataloader, test_dataloader]
+    return [train_dataloader, test_dataloader]
 
 

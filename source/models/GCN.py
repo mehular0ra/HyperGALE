@@ -74,6 +74,7 @@ class GCN(torch.nn.Module):
 
         x, edge_index, edge_weight, batch, labels = data.x, data.edge_index, data.edge_weight, data.batch, data.y
         edge_index, edge_weight = self.convert_edge_positive(edge_index, edge_weight)
+
         for i in range(self.num_layers):
             x = self.convs[i](x, edge_index, edge_weight)
             if i < self.num_layers:

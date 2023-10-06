@@ -1,8 +1,7 @@
 name: fc_abide2
 batch_size: 16
 
-train_set: 0.8
-val_set: 0.1
+train_set: 0.9
 test_set: 0.1
 
 fc_path: /mnt/ssd1/mehul_data/research/fc_large_data.npy

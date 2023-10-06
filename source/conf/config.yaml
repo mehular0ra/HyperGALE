@@ -1,16 +1,8 @@
 defaults: 
   - dataset: fc_abide2
-  - model: gcn   # hypergale,hypergraphgcn,hypergraphgcnv2,gcn,gat,graphsage
+  - model: hypergraphgcn   # hypergale,hypergraphgcn,hypergraphgcnv2,gcn,gat,graphsage
   - optimizer: adam
   - training: train
-
-
-# dataset:
-#   node: fc
-#   train_set: 0.9
-#   test_set: 0.1
-#   batch_size: 16
-
 
 model: 
   model_save: False

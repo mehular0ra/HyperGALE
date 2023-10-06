@@ -14,8 +14,6 @@ import logging
 
 from scipy.special import expit
 
-
-
 import ipdb
 
 
@@ -34,7 +32,7 @@ class Train:
         self.logger = logging.getLogger()
         self.model = model.to(self.device)
         self.logger.info(f'#model params: {count_params(self.model)}')
-        self.train_dataloader, self.val_dataloader, self.test_dataloader = dataloaders
+        self.train_dataloader, self.test_dataloader = dataloaders
         self.epochs = cfg.training.epochs
         self.total_steps = cfg.total_steps
         self.optimizers = optimizers
@@ -79,6 +77,10 @@ class Train:
             else: 
                 predict = self.model(data).squeeze()
 
+            # Ensure that the output tensor has at least one dimension
+            if predict.dim() == 0:
+                output = output.unsqueeze(0)
+
             label = data.y.to(self.device)
             loss = self.loss_fn(predict, label)
             loss.backward(retain_graph=True)
@@ -105,17 +107,19 @@ class Train:
                 else:
                     output = self.model(data).squeeze()
 
+                # Ensure that the output tensor has at least one dimension
+                if output.dim() == 0:
+                    output = output.unsqueeze(0)
+
                 label = data.y.to(self.device)
-                print("Epoch: ", epoch, "Iteration: ", iteration)
-                if iteration == 0:
-                    ipdb.set_trace()
                 loss = self.loss_fn(output, label)
 
                 loss_meter.update_with_weight(
                     loss.item(), label.shape[0])
                 acc = accuracy(output, label)
                 acc_meter.update_with_weight(acc, label.shape[0])
-                logits += output.squeeze().tolist()
+                logits += output.tolist()
+                # logits += output.squeeze().tolist()
                 labels += label.tolist()
 
         # convert logits to probabilities and predictions
@@ -147,7 +151,6 @@ class Train:
         for epoch in range(self.epochs):
             self.reset_meters()
             self.train_per_epoch(epoch, self.optimizers[0], self.lr_schedulers[0])
-            val_result = self.test_per_epoch(epoch, self.val_dataloader, self.val_loss, self.val_accuracy)
             test_result = self.test_per_epoch(epoch, self.test_dataloader,   
                                             self.test_loss, self.test_accuracy)
             
@@ -170,12 +173,6 @@ class Train:
                 f'Epoch[{epoch+1}/{self.epochs}]',
                 f'Train Loss:{self.train_loss.avg: .3f}',
                 f'Train Accuracy:{self.train_accuracy.avg: .3f}%',
-
-                f'Val Loss:{self.val_loss.avg: .3f}',
-                f'Val Accuracy:{self.val_accuracy.avg: .3f}%',
-                f'Val AUC:{val_result[0]:.4f}',
-                f'Val Sen:{val_result[-1]:.4f}',
-                f'Val Spe:{val_result[-2]:.4f}',
 
                 f'Test Loss:{self.test_loss.avg: .3f}',
                 f'Test Accuracy:{self.test_accuracy.avg: .3f}%',
@@ -201,8 +198,8 @@ class Train:
 
                     "Val Loss": self.val_loss.avg,
                     "Val Accuracy": self.val_accuracy.avg,
-                    "Val AUC": val_result[0],
-                    "Val Sensitivity": val_result[-1],
+                    # "Val AUC": val_result[0],
+                    # "Val Sensitivity": val_result[-1],
 
                     "Test Loss": self.test_loss.avg,
                     "Test Accuracy": self.test_accuracy.avg,
