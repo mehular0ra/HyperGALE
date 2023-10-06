@@ -1,4 +1,4 @@
-name: hyperGraphGCN
+name: HypergraphGCN
 data_creation: hypergraph
 
 K_neigs: 40 #5, 10, 25, 40, 60, 100, 200

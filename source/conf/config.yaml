@@ -1,6 +1,6 @@
 defaults: 
   - dataset: fc_abide2
-  - model: hypergraphgcn   # hypergale,hypergraphgcn,hypergraphgcnv2,gcn,gat,graphsage
+  - model: hypergale   # hypergale,hypergraphgcn,hypergraphgcnv2,gcn,gat,graphsage
   - optimizer: adam
   - training: train
 
@@ -8,11 +8,11 @@ model:
   model_save: False
 
 log_path: result
-repeat_time: 5
+repeat_time: 10
 device: cuda:0
 
 # wandb:
-is_wandb: False
+is_wandb: True
 # doing_sweep: True
 project: icassp
 entity: mehular0ra

@@ -7,18 +7,17 @@ import torch.nn.functional as F
 from torch import Tensor
 from torch.nn import Parameter
 
-# from torch_geometric.experimental import disable_dynamic_shapes
 from .experimental import disable_dynamic_shapes
 
 from torch_geometric.nn.conv import MessagePassing
 from torch_geometric.nn.dense.linear import Linear
 from torch_geometric.nn.inits import glorot, zeros
-from torch_geometric.utils import scatter, softmax
+from torch_geometric.utils import scatter
 
 import ipdb
 
 
-class DwHGNConv(MessagePassing):
+class HypergraphGCNConvv2(MessagePassing):
 
     def __init__(
         self,
@@ -60,10 +59,10 @@ class DwHGNConv(MessagePassing):
             self.register_parameter('bias', None)
 
         # saving for interpretabilty
-        self.saved_tensors = {
-            "learned_he_weights": [],
-            "hyperedge_index": [],
-        }
+        # self.saved_tensors = {
+        #     "learned_he_weights": [],
+        #     "hyperedge_index": [],
+        # }
 
 
         self.reset_parameters()
@@ -86,7 +85,6 @@ class DwHGNConv(MessagePassing):
     def forward(self, x: Tensor, 
                 hyperedge_index: Tensor,
                 hyperedge_weight: Optional[Tensor] = None,
-                hyperedge_attr: Optional[Tensor] = None,
                 num_edges: Optional[int] = None,
                 **kwargs) -> Tensor:
         
@@ -121,9 +119,8 @@ class DwHGNConv(MessagePassing):
         hyperedge_weight = hyperedge_weight * replicated_weights
 
         modified_hyperedge_weight = hyperedge_weight * B
-        ### ###
 
-        out = self.propagate(hyperedge_index, x=x, norm=modified_hyperedge_weight, alpha=alpha,
+        out = self.propagate(hyperedge_index, x=x, norm=modified_hyperedge_weight,
                              size=(num_nodes, num_edges))
         out = self.propagate(hyperedge_index.flip([0]), x=out, norm=D,
                              size=(num_edges, num_nodes))
@@ -136,13 +133,6 @@ class DwHGNConv(MessagePassing):
 
         if self.bias is not None:
             out = out + self.bias
-
-        if self.cfg.model.save_interpret and self.epoch in self.cfg.model.save_epochs:
-            self.saved_tensors["learned_he_weights"].append(
-                self.learned_he_weights.detach().clone())
-            self.saved_tensors["hyperedge_index"].append(
-                hyperedge_index.detach().clone())
-
 
         return out
 

@@ -3,7 +3,8 @@ from .GCN import GCN
 from .GraphSAGE import GraphSAGE
 from .GAT import GAT
 from .Hypergraph_models.HypergraphGCN import HypergraphGCN
-from .Hypergraph_models.HypergraphGCNv2 import DwHGN
+from .Hypergraph_models.HypergraphGCNv2 import HypergraphGCNv2
+from .Hypergraph_models.HyperGALE import HyperGALE
 
 
 

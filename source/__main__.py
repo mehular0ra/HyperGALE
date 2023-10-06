@@ -37,7 +37,7 @@ def model_training(cfg: DictConfig):
 def main(cfg: DictConfig) -> None:
 
     data_creation = cfg.model.get('data_creation', {})
-    if data_creation.get("hypergraph", "graph") == "hypergraph":
+    if data_creation == "hypergraph":
         group_name = f"{cfg.dataset.name}_{cfg.model.name}_node:{cfg.dataset.node}_Kneigs:{cfg.model.K_neigs}_layers:{cfg.model.num_layers}_hidden:{cfg.model.hidden_size}_lr:exp_1e-5"
     else:
         group_name = f"{cfg.dataset.name}_{cfg.model.name}_node:{cfg.dataset.node}_layers:{cfg.model.num_layers}_hidden:{cfg.model.hidden_size}_lr:exp_1e-5"
